@@ -1,0 +1,6 @@
+PREFIX ast: <http://eurovotech.org/objects-structure.owl#> 
+
+# select all subject that are a type of Planet
+
+SELECT ?planet
+WHERE { ?planet a ast:Planet }

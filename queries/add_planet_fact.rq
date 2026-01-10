@@ -1,0 +1,13 @@
+PREFIX def: <urn:maplib_default:> 
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ast: <http://eurovotech.org/objects-structure.owl#> 
+
+# inserting the fact that everything that has a 
+# def:planet relationship has to be a Planet
+
+INSERT {
+    ?s rdf:type ast:Planet .
+} 
+WHERE {
+  ?s def:planet ?o .
+}

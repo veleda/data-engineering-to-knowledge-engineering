@@ -1,0 +1,12 @@
+PREFIX def: <urn:maplib_default:> 
+PREFIX ast: <http://eurovotech.org/objects-structure.owl#> 
+
+# selecting all planets and
+# counting occurrances of moons in moonCount
+
+SELECT ?planet (COUNT(?moon) AS ?moonCount)
+WHERE {
+  ?moon def:planet_iri ?p .
+  ?p def:planet ?planet .
+}
+GROUP BY ?planet

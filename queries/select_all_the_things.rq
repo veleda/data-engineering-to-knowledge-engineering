@@ -1,0 +1,6 @@
+# select everything in the knowledge graph
+
+SELECT *
+WHERE {
+  ?subject ?predicate ?object
+}
