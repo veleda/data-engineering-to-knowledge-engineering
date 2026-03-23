@@ -1,8 +1,8 @@
 # From Data Engineering to Knowledge Engineering
 
-Code companion to the **From Data Engineering to Knowledge Engineering** blog series on Substack — exploring how data engineers can build knowledge graphs using [maplib](https://github.com/DataTreehouse/maplib), [Polars](https://pola.rs/) and Python.
+Code companion to the **From Data Engineering to Knowledge Engineering** article series on Substack — exploring how data engineers can build knowledge graphs using [maplib](https://github.com/DataTreehouse/maplib), [Polars](https://pola.rs/) and Python.
 
-### The blog series
+### The Substack article series
 
 * [Part 0: Why should you care about Knowledge Graphs](https://substack.com/home/post/p-188465277)
 * [Part 1: From Data Engineering to Knowledge Engineering](https://veronahe.substack.com/p/from-data-engineering-to-knowledge)
