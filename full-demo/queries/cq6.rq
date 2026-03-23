@@ -1,0 +1,50 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# CQ6: Which customers purchased products from ALL categories?
+#      (Universal quantification / "division" problem)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# WHY THIS IS INTERESTING:
+#   The relational division problem ("find X that is related to ALL Y")
+#   is notoriously awkward in SQL, typically requiring double-NOT-EXISTS,
+#   HAVING COUNT(DISTINCT ...) = (SELECT COUNT(DISTINCT ...)), or
+#   complex correlated subqueries.
+#
+#   In SPARQL, we compare the number of distinct categories a customer
+#   purchased from against the total number of categories. The inferred
+#   :purchased relationship makes this particularly clean — no JOINs
+#   through intermediate order tables.
+#
+# SQL EQUIVALENT (the classic "relational division" pattern):
+#   SELECT c.name
+#   FROM customers c
+#   JOIN orders o ON o.customer_id = c.customer_id
+#   JOIN products p ON p.product_id = o.product_id
+#   GROUP BY c.customer_id, c.name
+#   HAVING COUNT(DISTINCT p.category) = (
+#     SELECT COUNT(DISTINCT category) FROM products
+#   );
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SELECT ?customer_name (COUNT(DISTINCT ?cat) AS ?categories_covered)
+WHERE {
+    # Count the total number of distinct product categories
+    {
+        SELECT (COUNT(DISTINCT ?all_cat) AS ?total_categories)
+        WHERE {
+            ?p rdf:type :Product .
+            ?p :category ?all_cat .
+        }
+    }
+
+    # For each customer, count the categories they purchased from
+    ?customer :purchased ?product .
+    ?product  :category ?cat .
+    ?customer rdfs:label ?customer_name .
+}
+GROUP BY ?customer_name ?total_categories
+HAVING (COUNT(DISTINCT ?cat) = ?total_categories)
+ORDER BY ?customer_name

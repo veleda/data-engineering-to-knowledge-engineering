@@ -1,0 +1,19 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# Link support tickets to their SKOS issue type concept.
+# Matches the string value of :issueType against skos:prefLabel
+# in the IssueTypeScheme, creating a typed :hasIssueType link.
+
+INSERT {
+    ?ticket :hasIssueType ?concept .
+}
+WHERE {
+    ?ticket rdf:type :SupportTicket ;
+            :issueType ?typeLabel .
+    ?concept rdf:type skos:Concept ;
+             skos:prefLabel ?conceptLabel ;
+             skos:inScheme :IssueTypeScheme .
+    FILTER(STR(?typeLabel) = STR(?conceptLabel))
+}

@@ -1,0 +1,50 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# CQ3: Which customers have placed orders but never raised a support
+#      ticket? (Negation as failure)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# WHY THIS IS INTERESTING:
+#   FILTER NOT EXISTS is SPARQL's elegant negation — "give me things
+#   where a certain pattern does NOT hold." This is conceptually clean
+#   and reads almost like English.
+#
+#   In SQL you'd need a LEFT JOIN ... WHERE ... IS NULL or a NOT IN
+#   subquery, both of which obscure the intent behind mechanical syntax.
+#
+# SQL EQUIVALENT:
+#   SELECT DISTINCT c.name, c.segment
+#   FROM customers c
+#   JOIN orders o ON o.customer_id = c.customer_id
+#   LEFT JOIN support_tickets t ON t.customer_id = c.customer_id
+#   WHERE t.ticket_id IS NULL
+#   ORDER BY c.name;
+#
+#   -- OR with NOT EXISTS:
+#   SELECT DISTINCT c.name, c.segment
+#   FROM customers c
+#   JOIN orders o ON o.customer_id = c.customer_id
+#   WHERE NOT EXISTS (
+#     SELECT 1 FROM support_tickets t
+#     WHERE t.customer_id = c.customer_id
+#   );
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SELECT ?customer_name ?segment
+WHERE {
+    ?customer rdf:type :Customer .
+    ?customer rdfs:label ?customer_name .
+    ?customer :segment ?segment .
+
+    # The customer must have at least one order (inferred hasOrder)
+    ?customer :hasOrder ?order .
+
+    # ...but must NOT have any support tickets
+    FILTER NOT EXISTS {
+        ?ticket :raisedBy ?customer .
+    }
+}
+ORDER BY ?customer_name

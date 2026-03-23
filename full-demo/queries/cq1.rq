@@ -1,0 +1,32 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# CQ1: Which products has each customer purchased?
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# WHY THIS IS INTERESTING:
+#   The :purchased relationship does NOT exist in the source data.
+#   It was INFERRED by the Datalog rule:
+#     [?customer, :purchased, ?product] :-
+#       [?order, :placedBy, ?customer], [?order, :contains, ?product] .
+#
+#   In SPARQL, we simply query the inferred triple as if it always existed.
+#   No JOINs, no subqueries — the reasoning engine did the work.
+#
+# SQL EQUIVALENT (requires explicit JOIN):
+#   SELECT c.name AS customer, p.product_name AS product
+#   FROM customers c
+#   JOIN orders o ON o.customer_id = c.customer_id
+#   JOIN products p ON p.product_id = o.product_id
+#   GROUP BY c.name, p.product_name
+#   ORDER BY c.name;
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SELECT ?customer_name ?product_name
+WHERE {
+    ?customer :purchased ?product .
+    ?customer rdfs:label ?customer_name .
+    ?product  rdfs:label ?product_name .
+}
+ORDER BY ?customer_name ?product_name

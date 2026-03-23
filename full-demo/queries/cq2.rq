@@ -1,0 +1,44 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# CQ2: Which customers purchased a PremiumProduct but also raised a
+#      critical support ticket?
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# WHY THIS IS INTERESTING:
+#   This chains TWO separate inferences:
+#     1. :PremiumProduct is inferred from unitPrice > 500  (Datalog rule)
+#     2. :purchased is inferred from order→contains        (Datalog rule)
+#   Then it joins against a third entity type (SupportTicket).
+#
+#   The query reads like natural language: "customer purchased a premium
+#   product AND raised a critical ticket." The complexity is hidden in
+#   the graph — the query author doesn't need to know how "purchased" or
+#   "PremiumProduct" are derived.
+#
+# SQL EQUIVALENT (requires 4 JOINs + subquery for price classification):
+#   SELECT DISTINCT c.name, p.product_name, t.ticket_id
+#   FROM customers c
+#   JOIN orders o ON o.customer_id = c.customer_id
+#   JOIN products p ON p.product_id = o.product_id AND p.unit_price > 500
+#   JOIN support_tickets t ON t.customer_id = c.customer_id
+#     AND t.priority = 'critical'
+#   ORDER BY c.name;
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SELECT ?customer_name ?product_name ?ticket_id ?issue
+WHERE {
+    ?customer :purchased ?product .
+    ?product  rdf:type :PremiumProduct .
+    ?product  rdfs:label ?product_name .
+
+    ?ticket   :raisedBy ?customer .
+    ?ticket   :priority "critical" .
+    ?ticket   rdfs:label ?ticket_id .
+    ?ticket   :issueType ?issue .
+
+    ?customer rdfs:label ?customer_name .
+}
+ORDER BY ?customer_name

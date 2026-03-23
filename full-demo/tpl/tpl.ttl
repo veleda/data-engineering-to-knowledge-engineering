@@ -1,0 +1,80 @@
+@prefix : <http://data.treehouse.example/> .
+@prefix tpl: <http://data.treehouse.example/tpl/> .
+@prefix ottr: <http://ns.ottr.xyz/0.4/> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+# The mapping magic that translates input data (DataFrames) to knowledge graph (RDF) <3
+
+tpl:Customer[
+    xsd:string ?name,
+    ! ottr:IRI ?customer_iri,
+    xsd:string ?email,
+    xsd:string ?country,
+    xsd:string ?segment,
+    xsd:string ?signup_date
+ ] :: {
+    ottr:Triple(?customer_iri, rdf:type, :Customer),
+    ottr:Triple(?customer_iri, rdfs:label, ?name),
+    ottr:Triple(?customer_iri, :email, ?email),
+    ottr:Triple(?customer_iri, :country, ?country),
+    ottr:Triple(?customer_iri, :segment, ?segment),
+    ottr:Triple(?customer_iri, :signupDate, ?signup_date)
+} .
+
+
+tpl:Order[
+    xsd:string ?order_id,
+    ! ottr:IRI ?order_iri,
+    ottr:IRI ?customer_iri,
+    ottr:IRI ?product_iri,
+    xsd:long ?quantity,
+    xsd:double ?total_amount,
+    xsd:string ?order_date,
+    xsd:string ?status
+ ] :: {
+    ottr:Triple(?order_iri, rdf:type, :Order),
+    ottr:Triple(?order_iri, rdfs:label, ?order_id),
+    ottr:Triple(?order_iri, :placedBy, ?customer_iri),
+    ottr:Triple(?order_iri, :contains, ?product_iri),
+    ottr:Triple(?order_iri, :quantity, ?quantity),
+    ottr:Triple(?order_iri, :totalAmount, ?total_amount),
+    ottr:Triple(?order_iri, :orderDate, ?order_date),
+    ottr:Triple(?order_iri, :orderStatus, ?status)
+} .
+
+
+tpl:Product[
+    xsd:string ?product_name,
+    ! ottr:IRI ?product_iri,
+    xsd:string ?category,
+    xsd:double ?unit_price,
+    xsd:long ?stock_quantity
+ ] :: {
+    ottr:Triple(?product_iri, rdf:type, :Product),
+    ottr:Triple(?product_iri, rdfs:label, ?product_name),
+    ottr:Triple(?product_iri, :category, ?category),
+    ottr:Triple(?product_iri, :unitPrice, ?unit_price),
+    ottr:Triple(?product_iri, :stockQuantity, ?stock_quantity)
+} .
+
+
+tpl:SupportTicket[
+    xsd:string ?ticket_id,
+    ! ottr:IRI ?ticket_iri,
+    ottr:IRI ?customer_iri,
+    xsd:string ?issue_type,
+    xsd:string ?priority,
+    xsd:string ?ticket_status,
+    xsd:string ?created_date
+ ] :: {
+    ottr:Triple(?ticket_iri, rdf:type, :SupportTicket),
+    ottr:Triple(?ticket_iri, rdfs:label, ?ticket_id),
+    ottr:Triple(?ticket_iri, :raisedBy, ?customer_iri),
+    ottr:Triple(?ticket_iri, :issueType, ?issue_type),
+    ottr:Triple(?ticket_iri, :priority, ?priority),
+    ottr:Triple(?ticket_iri, :ticketStatus, ?ticket_status),
+    ottr:Triple(?ticket_iri, :createdDate, ?created_date)
+} .

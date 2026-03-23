@@ -1,0 +1,85 @@
+@prefix : <http://data.treehouse.example/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+#    DCAT Catalog
+#    Describing the data sources used in this masterclass using
+#    DCAT (Data Catalog Vocabulary, W3C Recommendation).
+#    https://www.w3.org/TR/vocab-dcat-3/
+#
+#    DCAT provides a standardised way to describe datasets, their
+#    distributions (file formats) and the catalog that groups them.
+#    This metadata travels with the knowledge graph — any system
+#    that speaks DCAT can discover and understand these sources.
+#################################################################
+
+
+###  The Catalog itself
+
+:CustomerDataCatalog rdf:type dcat:Catalog ;
+    dct:title "From DE to KE — Data Catalog"@en ;
+    dct:description "A catalog of the four data sources used in the from-de-to-ke project, demonstrating multi-format data integration into a knowledge graph."@en ;
+    dct:publisher :2Treehouse ;
+    dcat:dataset :CustomersDataset ,
+                 :OrdersDataset ,
+                 :ProductsDataset ,
+                 :SupportTicketsDataset .
+
+
+###  Customers — Parquet
+
+:CustomersDataset rdf:type dcat:Dataset ;
+    dct:title "Customer Master Data"@en ;
+    dct:description "Customer records with name, email, country, segment and signup date. Sourced as Parquet, the native columnar format of Databricks and lakehouse architectures."@en ;
+    dcat:theme :CustomerSegmentScheme ;
+    dcat:distribution :CustomersDistribution .
+
+:CustomersDistribution rdf:type dcat:Distribution ;
+    dcat:accessURL <file:///data/customers.parquet> ;
+    dcat:mediaType "application/vnd.apache.parquet" ;
+    dct:format "Parquet" .
+
+
+###  Orders — CSV
+
+:OrdersDataset rdf:type dcat:Dataset ;
+    dct:title "Order Transaction Data"@en ;
+    dct:description "Order records with customer and product references, quantities, amounts, dates and status. Classic CSV flat-file exchange format."@en ;
+    dcat:distribution :OrdersDistribution .
+
+:OrdersDistribution rdf:type dcat:Distribution ;
+    dcat:accessURL <file:///data/orders.csv> ;
+    dcat:mediaType "text/csv" ;
+    dct:format "CSV" .
+
+
+###  Products — Excel
+
+:ProductsDataset rdf:type dcat:Dataset ;
+    dct:title "Product Catalog"@en ;
+    dct:description "Product records with name, category, unit price and stock quantity. Sourced from Excel, the typical business-managed data format."@en ;
+    dcat:theme :ProductCategoryScheme ;
+    dcat:distribution :ProductsDistribution .
+
+:ProductsDistribution rdf:type dcat:Distribution ;
+    dcat:accessURL <file:///data/products.xlsx> ;
+    dcat:mediaType "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ;
+    dct:format "Excel (XLSX)" .
+
+
+###  Support Tickets — SQL endpoint (simulated)
+
+:SupportTicketsDataset rdf:type dcat:Dataset ;
+    dct:title "Support Ticket Data"@en ;
+    dct:description "Support ticket records with issue type, priority and status. Queried via Polars SQLContext, simulating a SQL endpoint (Databricks SQL, Snowflake, Postgres)."@en ;
+    dcat:theme :IssueTypeScheme ;
+    dcat:distribution :SupportTicketsDistribution .
+
+:SupportTicketsDistribution rdf:type dcat:Distribution ;
+    dcat:accessURL <file:///data/support_tickets.csv> ;
+    dcat:mediaType "text/csv" ;
+    dct:format "CSV (accessed via SQL)" .

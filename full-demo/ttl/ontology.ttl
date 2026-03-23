@@ -1,0 +1,271 @@
+@prefix : <http://data.treehouse.example/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix fibo-fnd-pty-pty: <https://spec.edmcouncil.org/fibo/ontology/FND/Parties/Parties/> .
+@prefix fibo-fnd-pty-rl: <https://spec.edmcouncil.org/fibo/ontology/FND/Parties/Roles/> .
+@prefix fibo-fnd-agr-agr: <https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Agreements/> .
+@prefix fibo-fnd-pas-pas: <https://spec.edmcouncil.org/fibo/ontology/FND/ProductsAndServices/ProductsAndServices/> .
+@base <http://data.treehouse.example/> .
+
+<http://data.treehouse.example/> rdf:type owl:Ontology ;
+                                  rdfs:comment "A simple ontology for customer relationship management, used for demonstrational purposes."@en ;
+                                  rdfs:label "Customer CRM lite"@en ;
+                                  dct:description "Connects local CRM concepts to SKOS (vocabularies), DCAT (data catalog) and FIBO (financial industry) standards."@en .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://data.treehouse.example/placedBy
+:placedBy rdf:type owl:ObjectProperty ;
+          rdfs:domain :Order ;
+          rdfs:range :Customer ;
+          rdfs:comment "An order is placed by a customer."@en ;
+          rdfs:label "placed by"@en .
+
+
+###  http://data.treehouse.example/contains
+:contains rdf:type owl:ObjectProperty ;
+          rdfs:domain :Order ;
+          rdfs:range :Product ;
+          rdfs:comment "An order contains a product."@en ;
+          rdfs:label "contains"@en .
+
+
+###  http://data.treehouse.example/raisedBy
+:raisedBy rdf:type owl:ObjectProperty ;
+          rdfs:domain :SupportTicket ;
+          rdfs:range :Customer ;
+          rdfs:comment "A support ticket is raised by a customer."@en ;
+          rdfs:label "raised by"@en .
+
+
+###  http://data.treehouse.example/hasCategory
+###  Links a product to its SKOS concept in the ProductCategoryScheme.
+:hasCategory rdf:type owl:ObjectProperty ;
+             rdfs:domain :Product ;
+             rdfs:range skos:Concept ;
+             rdfs:comment "Links a product to its SKOS category concept."@en ;
+             rdfs:label "has category"@en .
+
+
+###  http://data.treehouse.example/hasSegment
+###  Links a customer to their SKOS concept in the CustomerSegmentScheme.
+:hasSegment rdf:type owl:ObjectProperty ;
+            rdfs:domain :Customer ;
+            rdfs:range skos:Concept ;
+            rdfs:comment "Links a customer to their SKOS segment concept."@en ;
+            rdfs:label "has segment"@en .
+
+
+###  http://data.treehouse.example/hasIssueType
+###  Links a support ticket to its SKOS concept in the IssueTypeScheme.
+:hasIssueType rdf:type owl:ObjectProperty ;
+              rdfs:domain :SupportTicket ;
+              rdfs:range skos:Concept ;
+              rdfs:comment "Links a ticket to its SKOS issue type concept."@en ;
+              rdfs:label "has issue type"@en .
+
+
+###  http://data.treehouse.example/hasPriority
+###  Links a support ticket to its SKOS concept in the PriorityScheme.
+:hasPriority rdf:type owl:ObjectProperty ;
+             rdfs:domain :SupportTicket ;
+             rdfs:range skos:Concept ;
+             rdfs:comment "Links a ticket to its SKOS priority concept."@en ;
+             rdfs:label "has priority"@en .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://data.treehouse.example/email
+:email rdf:type owl:DatatypeProperty ;
+       rdfs:domain :Customer ;
+       rdfs:range xsd:string ;
+       rdfs:label "email"@en .
+
+
+###  http://data.treehouse.example/country
+:country rdf:type owl:DatatypeProperty ;
+         rdfs:domain :Customer ;
+         rdfs:range xsd:string ;
+         rdfs:label "country"@en .
+
+
+###  http://data.treehouse.example/segment
+:segment rdf:type owl:DatatypeProperty ;
+         rdfs:domain :Customer ;
+         rdfs:range xsd:string ;
+         rdfs:label "segment"@en .
+
+
+###  http://data.treehouse.example/signupDate
+:signupDate rdf:type owl:DatatypeProperty ;
+            rdfs:domain :Customer ;
+            rdfs:range xsd:string ;
+            rdfs:label "signup date"@en .
+
+
+###  http://data.treehouse.example/quantity
+:quantity rdf:type owl:DatatypeProperty ;
+          rdfs:domain :Order ;
+          rdfs:range xsd:long ;
+          rdfs:label "quantity"@en .
+
+
+###  http://data.treehouse.example/totalAmount
+:totalAmount rdf:type owl:DatatypeProperty ;
+             rdfs:domain :Order ;
+             rdfs:range xsd:double ;
+             rdfs:label "total amount"@en .
+
+
+###  http://data.treehouse.example/orderDate
+:orderDate rdf:type owl:DatatypeProperty ;
+           rdfs:domain :Order ;
+           rdfs:range xsd:string ;
+           rdfs:label "order date"@en .
+
+
+###  http://data.treehouse.example/orderStatus
+:orderStatus rdf:type owl:DatatypeProperty ;
+             rdfs:domain :Order ;
+             rdfs:range xsd:string ;
+             rdfs:label "order status"@en .
+
+
+###  http://data.treehouse.example/category
+:category rdf:type owl:DatatypeProperty ;
+          rdfs:domain :Product ;
+          rdfs:range xsd:string ;
+          rdfs:label "category"@en .
+
+
+###  http://data.treehouse.example/unitPrice
+:unitPrice rdf:type owl:DatatypeProperty ;
+           rdfs:domain :Product ;
+           rdfs:range xsd:double ;
+           rdfs:label "unit price"@en .
+
+
+###  http://data.treehouse.example/stockQuantity
+:stockQuantity rdf:type owl:DatatypeProperty ;
+               rdfs:domain :Product ;
+               rdfs:range xsd:long ;
+               rdfs:label "stock quantity"@en .
+
+
+###  http://data.treehouse.example/issueType
+:issueType rdf:type owl:DatatypeProperty ;
+           rdfs:domain :SupportTicket ;
+           rdfs:range xsd:string ;
+           rdfs:label "issue type"@en .
+
+
+###  http://data.treehouse.example/priority
+:priority rdf:type owl:DatatypeProperty ;
+          rdfs:domain :SupportTicket ;
+          rdfs:range xsd:string ;
+          rdfs:label "priority"@en .
+
+
+###  http://data.treehouse.example/ticketStatus
+:ticketStatus rdf:type owl:DatatypeProperty ;
+              rdfs:domain :SupportTicket ;
+              rdfs:range xsd:string ;
+              rdfs:label "ticket status"@en .
+
+
+###  http://data.treehouse.example/createdDate
+:createdDate rdf:type owl:DatatypeProperty ;
+             rdfs:domain :SupportTicket ;
+             rdfs:range xsd:string ;
+             rdfs:label "created date"@en .
+
+
+#################################################################
+#    Classes
+#    Connected to well-known external ontologies:
+#    - FIBO (Financial Industry Business Ontology) for parties,
+#      roles, agreements and products/services.
+#      https://spec.edmcouncil.org/fibo/
+#    - SKOS concept schemes are defined in vocab.ttl
+#    - DCAT catalog metadata is defined in catalog.ttl
+#################################################################
+
+###  http://data.treehouse.example/Customer
+###  A Customer is a party playing a role (FIBO Foundations).
+:Customer rdf:type owl:Class ;
+          rdfs:subClassOf fibo-fnd-pty-rl:AgentInRole ;
+          rdfs:label "Customer"@en ;
+          rdfs:comment "A customer is a party (person or organisation) playing the role of buyer in a commercial relationship."@en .
+
+
+###  http://data.treehouse.example/Order
+###  An Order is a commitment to a commercial agreement (FIBO).
+:Order rdf:type owl:Class ;
+       rdfs:subClassOf fibo-fnd-agr-agr:MutualCommitment ;
+       rdfs:label "Order"@en ;
+       rdfs:comment "An order represents a mutual commitment between a customer and a provider for the delivery of products or services."@en .
+
+
+###  http://data.treehouse.example/Product
+###  A Product aligns with the FIBO Products and Services concept.
+:Product rdf:type owl:Class ;
+         rdfs:subClassOf fibo-fnd-pas-pas:Product ;
+         rdfs:label "Product"@en ;
+         rdfs:comment "A product offered in the catalog, classified by SKOS product category concepts."@en .
+
+
+###  http://data.treehouse.example/SupportTicket
+:SupportTicket rdf:type owl:Class ;
+               rdfs:label "Support Ticket"@en ;
+               rdfs:comment "A support ticket raised by a customer, classified by SKOS issue type and priority concepts."@en .
+
+
+###  http://data.treehouse.example/CustomerSegmentClass
+:CustomerSegmentClass rdf:type owl:Class ;
+                      rdfs:label "Customer segment classification"@en .
+
+
+###  http://data.treehouse.example/HighValueCustomer
+:HighValueCustomer rdf:type owl:Class ;
+                   rdfs:subClassOf :CustomerSegmentClass ;
+                   rdfs:label "High-value customer"@en .
+
+
+###  http://data.treehouse.example/RegularCustomer
+:RegularCustomer rdf:type owl:Class ;
+                 rdfs:subClassOf :CustomerSegmentClass ;
+                 rdfs:label "Regular customer"@en .
+
+
+###  http://data.treehouse.example/AtRiskCustomer
+:AtRiskCustomer rdf:type owl:Class ;
+                rdfs:subClassOf :CustomerSegmentClass ;
+                rdfs:label "At-risk customer"@en .
+
+
+###  http://data.treehouse.example/ProductCategory
+:ProductCategory rdf:type owl:Class ;
+                 rdfs:label "Product category"@en .
+
+
+###  http://data.treehouse.example/PremiumProduct
+:PremiumProduct rdf:type owl:Class ;
+                rdfs:subClassOf :ProductCategory ;
+                rdfs:label "Premium product"@en .
+
+
+###  http://data.treehouse.example/BudgetProduct
+:BudgetProduct rdf:type owl:Class ;
+               rdfs:subClassOf :ProductCategory ;
+               rdfs:label "Budget product"@en .

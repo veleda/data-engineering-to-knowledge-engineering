@@ -1,0 +1,52 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# CQ8: Revenue per country per product category — but only for
+#      categories where ANY product is classified as PremiumProduct.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# WHY THIS IS INTERESTING:
+#   This query traverses 4 entity types (Customer → Order → Product →
+#   inferred PremiumProduct) and aggregates across two dimensions
+#   (country, category). The PremiumProduct classification is inferred
+#   from a Datalog rule, not stored in any source table.
+#
+#   The SPARQL pattern matches look like navigating a graph:
+#     order → placedBy → customer → country
+#     order → contains → product → category
+#     product → rdf:type → PremiumProduct (inferred)
+#
+#   In SQL, the equivalent requires navigating 4 JOINs and a subquery
+#   to pre-filter categories, plus a CASE expression for classification.
+#
+# SQL EQUIVALENT:
+#   SELECT c.country, p.category, SUM(o.total_amount) AS revenue
+#   FROM orders o
+#   JOIN customers c ON c.customer_id = o.customer_id
+#   JOIN products p ON p.product_id = o.product_id
+#   WHERE p.category IN (
+#     SELECT DISTINCT category FROM products WHERE unit_price > 500
+#   )
+#   GROUP BY c.country, p.category
+#   ORDER BY revenue DESC;
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SELECT ?country ?category (SUM(?amount) AS ?revenue)
+WHERE {
+    ?order :placedBy ?customer .
+    ?order :contains ?product .
+    ?order :totalAmount ?amount .
+
+    ?customer :country ?country .
+    ?product  :category ?category .
+
+    # Only include categories that contain at least one PremiumProduct
+    FILTER EXISTS {
+        ?any_product rdf:type :PremiumProduct .
+        ?any_product :category ?category .
+    }
+}
+GROUP BY ?country ?category
+ORDER BY DESC(?revenue)

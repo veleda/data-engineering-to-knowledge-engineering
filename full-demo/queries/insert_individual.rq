@@ -1,0 +1,14 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# Insert everything that has some rdf:type to anything except for owl:Class
+# to be rdf:type of owl:NamedIndividual
+
+INSERT {
+    ?s rdf:type owl:NamedIndividual .
+}
+WHERE {
+  ?s rdf:type ?o .
+  FILTER(?o != owl:Class)
+}

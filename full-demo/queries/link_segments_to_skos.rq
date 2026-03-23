@@ -1,0 +1,19 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# Link customers to their SKOS segment concept.
+# Matches the string value of :segment against skos:prefLabel
+# in the CustomerSegmentScheme, creating a typed :hasSegment link.
+
+INSERT {
+    ?customer :hasSegment ?concept .
+}
+WHERE {
+    ?customer rdf:type :Customer ;
+              :segment ?segLabel .
+    ?concept rdf:type skos:Concept ;
+             skos:prefLabel ?conceptLabel ;
+             skos:inScheme :CustomerSegmentScheme .
+    FILTER(STR(?segLabel) = STR(?conceptLabel))
+}

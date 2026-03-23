@@ -1,0 +1,72 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# CQ5: Customer 360° — for a given customer, return EVERYTHING related:
+#      their orders, the products in those orders, their tickets,
+#      the inferred product classifications — all via OPTIONAL graph
+#      pattern matching.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# WHY THIS IS INTERESTING:
+#   SPARQL OPTIONAL blocks are like LEFT JOINs, but composable and
+#   independently nestable. Each OPTIONAL block is an independent "arm"
+#   of exploration from the customer node — orders, tickets, products.
+#   Missing data in one arm doesn't suppress results from another.
+#
+#   In SQL this requires multiple LEFT JOINs that explode into a
+#   Cartesian product (orders × tickets), demanding DISTINCT or
+#   subqueries to de-duplicate. The graph approach avoids this entirely.
+#
+# SQL EQUIVALENT (suffers from Cartesian explosion):
+#   SELECT c.name, c.segment, c.country,
+#          o.order_id, o.total_amount, o.order_date,
+#          p.product_name, p.category,
+#          CASE WHEN p.unit_price > 500 THEN 'Premium'
+#               WHEN p.unit_price <= 100 THEN 'Budget' ELSE 'Standard' END,
+#          t.ticket_id, t.issue_type, t.priority
+#   FROM customers c
+#   LEFT JOIN orders o ON o.customer_id = c.customer_id
+#   LEFT JOIN products p ON p.product_id = o.product_id
+#   LEFT JOIN support_tickets t ON t.customer_id = c.customer_id
+#   WHERE c.name = 'Noah Hansen'
+#   -- ⚠ This produces |orders| × |tickets| rows per customer!
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SELECT ?customer_name ?segment ?country
+       ?order_label ?total_amount ?order_date
+       ?product_name ?product_type
+       ?ticket_label ?issue_type ?priority
+WHERE {
+    ?customer rdf:type :Customer .
+    ?customer rdfs:label ?customer_name .
+    ?customer :segment ?segment .
+    ?customer :country ?country .
+
+    OPTIONAL {
+        ?order :placedBy ?customer .
+        ?order rdfs:label ?order_label .
+        ?order :totalAmount ?total_amount .
+        ?order :orderDate ?order_date .
+
+        OPTIONAL {
+            ?order :contains ?product .
+            ?product rdfs:label ?product_name .
+
+            OPTIONAL {
+                ?product rdf:type ?ptype .
+                ?ptype rdfs:label ?product_type .
+                FILTER(?ptype IN (:PremiumProduct, :BudgetProduct))
+            }
+        }
+    }
+
+    OPTIONAL {
+        ?ticket :raisedBy ?customer .
+        ?ticket rdfs:label ?ticket_label .
+        ?ticket :issueType ?issue_type .
+        ?ticket :priority ?priority .
+    }
+}
+ORDER BY ?customer_name ?order_label ?ticket_label

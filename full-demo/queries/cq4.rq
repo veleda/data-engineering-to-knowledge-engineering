@@ -1,0 +1,46 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# CQ4: Schema introspection — what classes exist, what properties belong
+#      to each class (via rdfs:domain), and how many instances of each?
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# WHY THIS IS INTERESTING:
+#   In a knowledge graph, the schema IS data — stored as triples just
+#   like everything else. SPARQL can query the ontology and the instance
+#   data in the same query. This is introspection: "tell me about your
+#   own structure."
+#
+#   In SQL, you'd need to query information_schema (a system catalog)
+#   AND then dynamically build queries against the actual tables — these
+#   are completely separate worlds. You cannot mix schema queries and
+#   data queries in a single SQL statement.
+#
+# SQL EQUIVALENT:
+#   Not possible in a single query. You would need:
+#   1. SELECT table_name, column_name FROM information_schema.columns
+#   2. Then dynamically build COUNT(*) queries per table
+#   3. Then somehow UNION the results together
+#   — i.e., it requires dynamic SQL or application-level code.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SELECT ?class_label (COUNT(DISTINCT ?instance) AS ?instance_count)
+       (GROUP_CONCAT(DISTINCT ?prop_label; separator=", ") AS ?properties)
+WHERE {
+    ?class rdf:type owl:Class .
+    ?class rdfs:label ?class_label .
+
+    OPTIONAL {
+        ?prop rdfs:domain ?class .
+        ?prop rdfs:label ?prop_label .
+    }
+
+    OPTIONAL {
+        ?instance rdf:type ?class .
+    }
+}
+GROUP BY ?class ?class_label
+ORDER BY DESC(?instance_count)

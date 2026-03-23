@@ -1,0 +1,142 @@
+@prefix : <http://data.treehouse.example/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+
+#################################################################
+#    SKOS Concept Schemes
+#    Controlled vocabularies for the CRM domain, using SKOS
+#    (Simple Knowledge Organisation System, W3C Recommendation).
+#    https://www.w3.org/TR/skos-reference/
+#
+#    SKOS lets us define terms, their labels, definitions and
+#    hierarchical relationships in a standardised, reusable way.
+#    Any system that understands SKOS can consume these vocabularies.
+#################################################################
+
+
+###  Product Categories
+###  A classification of the product catalog into business-defined groups.
+
+:ProductCategoryScheme rdf:type skos:ConceptScheme ;
+    skos:prefLabel "Product Categories"@en ;
+    dct:description "Controlled vocabulary for product categories in the CRM system."@en .
+
+:Software rdf:type skos:Concept ;
+    skos:prefLabel "Software"@en ;
+    skos:definition "Digital products including platforms, tools and engines."@en ;
+    skos:inScheme :ProductCategoryScheme .
+
+:Hardware rdf:type skos:Concept ;
+    skos:prefLabel "Hardware"@en ;
+    skos:definition "Physical computing equipment such as GPUs, routers and compute nodes."@en ;
+    skos:inScheme :ProductCategoryScheme .
+
+:Services rdf:type skos:Concept ;
+    skos:prefLabel "Services"@en ;
+    skos:definition "Professional services including ETL pipelines, consulting and managed offerings."@en ;
+    skos:inScheme :ProductCategoryScheme .
+
+:Training rdf:type skos:Concept ;
+    skos:prefLabel "Training"@en ;
+    skos:definition "Educational offerings such as workshops, bootcamps and courses."@en ;
+    skos:inScheme :ProductCategoryScheme ;
+    skos:related :Services .
+
+:Support rdf:type skos:Concept ;
+    skos:prefLabel "Support"@en ;
+    skos:definition "Customer support plans including helpdesk and SLA-based offerings."@en ;
+    skos:inScheme :ProductCategoryScheme ;
+    skos:related :Services .
+
+
+###  Customer Segments
+###  Business segmentation of the customer base.
+
+:CustomerSegmentScheme rdf:type skos:ConceptScheme ;
+    skos:prefLabel "Customer Segments"@en ;
+    dct:description "Controlled vocabulary for customer segments."@en .
+
+:EnterpriseSegment rdf:type skos:Concept ;
+    skos:prefLabel "Enterprise"@en ;
+    skos:definition "Large organisations with complex needs and high-value contracts."@en ;
+    skos:inScheme :CustomerSegmentScheme .
+
+:SMBSegment rdf:type skos:Concept ;
+    skos:prefLabel "SMB"@en ;
+    skos:altLabel "Small and Medium Business"@en ;
+    skos:definition "Small and medium-sized businesses."@en ;
+    skos:inScheme :CustomerSegmentScheme .
+
+:StartupSegment rdf:type skos:Concept ;
+    skos:prefLabel "Startup"@en ;
+    skos:definition "Early-stage companies with growth potential."@en ;
+    skos:inScheme :CustomerSegmentScheme ;
+    skos:related :SMBSegment .
+
+:GovernmentSegment rdf:type skos:Concept ;
+    skos:prefLabel "Government"@en ;
+    skos:definition "Public sector organisations and agencies."@en ;
+    skos:inScheme :CustomerSegmentScheme .
+
+
+###  Support Ticket Issue Types
+
+:IssueTypeScheme rdf:type skos:ConceptScheme ;
+    skos:prefLabel "Issue Types"@en ;
+    dct:description "Controlled vocabulary for support ticket issue classification."@en .
+
+:BillingIssue rdf:type skos:Concept ;
+    skos:prefLabel "billing"@en ;
+    skos:definition "Issues related to invoicing, payments and account charges."@en ;
+    skos:inScheme :IssueTypeScheme .
+
+:TechnicalIssue rdf:type skos:Concept ;
+    skos:prefLabel "technical"@en ;
+    skos:definition "Technical problems with products or services."@en ;
+    skos:inScheme :IssueTypeScheme .
+
+:OnboardingIssue rdf:type skos:Concept ;
+    skos:prefLabel "onboarding"@en ;
+    skos:definition "Issues encountered during customer onboarding."@en ;
+    skos:inScheme :IssueTypeScheme .
+
+:FeatureRequestIssue rdf:type skos:Concept ;
+    skos:prefLabel "feature_request"@en ;
+    skos:definition "Requests for new features or enhancements."@en ;
+    skos:inScheme :IssueTypeScheme .
+
+:BugReportIssue rdf:type skos:Concept ;
+    skos:prefLabel "bug_report"@en ;
+    skos:definition "Reports of software defects."@en ;
+    skos:inScheme :IssueTypeScheme ;
+    skos:related :TechnicalIssue .
+
+
+###  Ticket Priority Levels
+
+:PriorityScheme rdf:type skos:ConceptScheme ;
+    skos:prefLabel "Priority Levels"@en ;
+    dct:description "Controlled vocabulary for support ticket priority."@en .
+
+:LowPriority rdf:type skos:Concept ;
+    skos:prefLabel "low"@en ;
+    skos:inScheme :PriorityScheme .
+
+:MediumPriority rdf:type skos:Concept ;
+    skos:prefLabel "medium"@en ;
+    skos:inScheme :PriorityScheme ;
+    skos:broader :LowPriority .
+
+:HighPriority rdf:type skos:Concept ;
+    skos:prefLabel "high"@en ;
+    skos:inScheme :PriorityScheme ;
+    skos:broader :MediumPriority .
+
+:CriticalPriority rdf:type skos:Concept ;
+    skos:prefLabel "critical"@en ;
+    skos:definition "Urgent issues requiring immediate attention."@en ;
+    skos:inScheme :PriorityScheme ;
+    skos:broader :HighPriority .

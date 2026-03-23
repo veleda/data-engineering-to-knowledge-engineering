@@ -1,0 +1,22 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://data.treehouse.example/>
+
+# Inverse of placedBy is hasOrder — if an order is placed by a customer, the customer has that order
+[?customer, :hasOrder, ?order] :- [?order, :placedBy, ?customer] .
+
+# Inverse of raisedBy is hasTicket — if a ticket is raised by a customer, the customer has that ticket
+[?customer, :hasTicket, ?ticket] :- [?ticket, :raisedBy, ?customer] .
+
+# If a customer placed an order that contains a product, the customer purchased that product
+[?customer, :purchased, ?product] :- [?order, :placedBy, ?customer], [?order, :contains, ?product] .
+
+# Classify products as Premium (unit price > 500) or Budget (unit price <= 100)
+[?product, rdf:type, :PremiumProduct] :-
+  [?product, rdf:type, :Product],
+  [?product, :unitPrice, ?price] ,
+  FILTER(?price > 500) .
+
+[?product, rdf:type, :BudgetProduct] :-
+  [?product, rdf:type, :Product],
+  [?product, :unitPrice, ?price] ,
+  FILTER(?price <= 100) .

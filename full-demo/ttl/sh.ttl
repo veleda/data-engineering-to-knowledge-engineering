@@ -1,0 +1,31 @@
+@prefix : <http://data.treehouse.example/> .
+@prefix rule: <http://data.treehouse.example/sh/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+rule:Customer a sh:NodeShape ;
+    sh:targetClass :Customer ;
+    sh:property rule:Customer-email ;
+    sh:property rule:Customer-country .
+
+rule:Customer-email a sh:PropertyShape ;
+    sh:path :email ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string .
+
+rule:Customer-country a sh:PropertyShape ;
+    sh:path :country ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string .
+
+rule:Order a sh:NodeShape ;
+    sh:targetClass :Order ;
+    sh:property rule:Order-placedBy .
+
+rule:Order-placedBy a sh:PropertyShape ;
+    sh:path :placedBy ;
+    sh:minCount 1 ;
+    sh:class :Customer .

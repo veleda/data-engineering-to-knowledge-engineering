@@ -1,0 +1,11 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?customer ?label ?country ?segment
+WHERE {
+  ?customer rdf:type :Customer ;
+    rdfs:label ?label ;
+    :country ?country ;
+    :segment ?segment .
+}

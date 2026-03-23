@@ -1,0 +1,19 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# Link support tickets to their SKOS priority concept.
+# Matches the string value of :priority against skos:prefLabel
+# in the PriorityScheme, creating a typed :hasPriority link.
+
+INSERT {
+    ?ticket :hasPriority ?concept .
+}
+WHERE {
+    ?ticket rdf:type :SupportTicket ;
+            :priority ?prioLabel .
+    ?concept rdf:type skos:Concept ;
+             skos:prefLabel ?conceptLabel ;
+             skos:inScheme :PriorityScheme .
+    FILTER(STR(?prioLabel) = STR(?conceptLabel))
+}

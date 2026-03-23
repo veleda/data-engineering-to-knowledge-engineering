@@ -1,0 +1,9 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+
+# Return all focus nodes where the validation result is a violation.
+SELECT ?focusNode
+WHERE {
+    ?s sh:focusNode ?focusNode ;
+        sh:resultSeverity sh:Violation .
+}

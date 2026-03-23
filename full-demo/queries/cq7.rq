@@ -1,0 +1,58 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# CQ7: CONSTRUCT a customer 360° subgraph — return a GRAPH, not a table.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# WHY THIS IS INTERESTING:
+#   SQL can only return rectangular tables. SPARQL CONSTRUCT returns a
+#   new RDF graph — a set of triples that can be merged, federated, or
+#   visualized directly. This is like running a query that outputs a
+#   JSON-LD document or a subgraph you can load into another tool.
+#
+#   Here we extract a "customer profile" subgraph including their name,
+#   orders, purchased products, and tickets — as a graph fragment.
+#   This subgraph can be serialized, sent to another system, or merged
+#   with graphs from other sources.
+#
+# SQL EQUIVALENT:
+#   Not possible. SQL returns rows and columns.
+#   You'd need application code to assemble a JSON/graph structure
+#   from multiple query results.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONSTRUCT {
+    ?customer rdf:type :Customer .
+    ?customer rdfs:label ?name .
+    ?customer :segment ?segment .
+    ?customer :country ?country .
+    ?customer :purchased ?product .
+    ?customer :hasOrder ?order .
+    ?customer :hasTicket ?ticket .
+    ?order    :totalAmount ?amount .
+    ?product  rdfs:label ?product_name .
+    ?ticket   :issueType ?issue .
+    ?ticket   :priority ?priority .
+}
+WHERE {
+    ?customer rdf:type :Customer .
+    ?customer rdfs:label ?name .
+    ?customer :segment ?segment .
+    ?customer :country ?country .
+
+    OPTIONAL {
+        ?customer :purchased ?product .
+        ?product  rdfs:label ?product_name .
+    }
+    OPTIONAL {
+        ?customer :hasOrder ?order .
+        ?order    :totalAmount ?amount .
+    }
+    OPTIONAL {
+        ?customer :hasTicket ?ticket .
+        ?ticket   :issueType ?issue .
+        ?ticket   :priority ?priority .
+    }
+}

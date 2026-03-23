@@ -1,0 +1,19 @@
+PREFIX : <http://data.treehouse.example/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# Link products to their SKOS category concept.
+# Matches the string value of :category against skos:prefLabel
+# in the ProductCategoryScheme, creating a typed :hasCategory link.
+
+INSERT {
+    ?product :hasCategory ?concept .
+}
+WHERE {
+    ?product rdf:type :Product ;
+             :category ?catLabel .
+    ?concept rdf:type skos:Concept ;
+             skos:prefLabel ?conceptLabel ;
+             skos:inScheme :ProductCategoryScheme .
+    FILTER(STR(?catLabel) = STR(?conceptLabel))
+}
